@@ -6,8 +6,22 @@ import sys
 import re
 import time
 
-def main(filmName):
+def extract(filmName):
     db = MySQLdb.connect("127.0.0.1","dizing","ynr3","dizing" )
+    cursor=db.cursor()
+    # add film to the database
+
+    sql = "INSERT INTO movie(title,path) VALUES (%s,%s)"
+    cursor.execute(sql, (filmName, filmName) )
+    mid = cursor.lastrowid
+
+    # get current words
+    cursor.execute("SELECT wid, original, pos FROM words")
+    rows = cursor.fetchall()
+    words = dict()
+    for row in rows:
+        words[(row[1],row[2])] = row[0]
+
     tag_re = re.compile('<.*?>')
 
     from nltk.stem import WordNetLemmatizer
@@ -20,6 +34,8 @@ def main(filmName):
     from nltk.corpus import stopwords
     stop = stopwords.words('english')
     subs = pysrt.open('filmler/%s/%s.srt' % (filmName, filmName), encoding='iso-8859-1')
+
+
 
     ignore = -1
     j=0
@@ -49,7 +65,7 @@ def main(filmName):
         ignoreList.pop(0)
 
     frame = 5 * 1000   # 5 seconds before and after
-    for (i,sub) in enumerate(new_subs):
+    for (i,sub) in enumerate(new_subs[:80]):
       # start time of scene
       try:
           j = i - 1
@@ -91,36 +107,39 @@ def main(filmName):
       tags = nltk.pos_tag(text)
       #print tags
 
-      cursor=db.cursor()
+
       our_tags = { "NN": wn.NOUN, "JJ":wn.ADJ, "VB":wn.VERB, "RB":wn.ADV }
-      for j in tags:
+
+      sql = "INSERT INTO scene(mid,sentence,start,stop) VALUES (%s,%s,%s,%s)"
+      cursor.execute(sql, (mid, sub['text'], start, end) )
+      sid = cursor.lastrowid
+      scene = { 'sentence': sub['text'], 'start': start, 'end': end }
+      print "scene: %s\n" % (scene)
+      f.write(str(scene)+ "\n")
+      for j in set(tags):
         base_pos = j[1][:2]
-        if((j[0] not in stop) and (base_pos in our_tags.keys())):
-            wn_pos = our_tags[base_pos]
-            stem=wnl.lemmatize(j[0], wn_pos)
+        word = j[0].lower()
+        if((word not in stop) and (base_pos in our_tags.keys()) and "'" not in word):
+            if ((word, base_pos) in words):
+                wid = words[(word, base_pos)]
+            else:
+                wn_pos = our_tags[base_pos]
+                stem=wnl.lemmatize(word, wn_pos)
+                sql = "INSERT INTO words(original, pos, stem1, stem2) VALUES (%s,%s,%s,%s)"
+                cursor.execute(sql, (word, base_pos, stem, snowball_stemmer.stem(word)))
+                wid = cursor.lastrowid
+                words[(word, base_pos)] = wid
+            sql = "INSERT INTO words_scenes(wid, sid) VALUES (%d,%d)" % (int(wid),int(sid))
+            cursor.execute(sql)
 
-            scene = { 'sentence': sub['text'], 'start': start, 'end': end, 'word':stem }
-            print "scene: %s\n" % (scene)
-            f.write(str(scene)+ "\n")
-            print str(base_pos)+"\n"
-
-            sql = "INSERT INTO scene(sentence, start, stop, word) VALUES (%s,%s,%s,%s)"
-            sql1 = "INSERT INTO analyzed(original, pos, stem1, stem2) VALUES (%s,%s,%s,%s)"
-            print sql
-            print sql1
-            try:
-              cursor.execute(sql, (sub['text'], str(start), str(end), str(stem)) )
-              cursor.execute(sql1, (j[0], str(base_pos), str(stem), str(snowball_stemmer.stem(j[0]))))
-              db.commit()
-              # time.sleep(0.2)
-            except MySQLdb.Error, e:
-                print e
-                print "Error %d: %s" % (e.args[0], e.args[1])
-                sys.exit(1)
-                # db.rollback()
-
+    db.commit()
     db.close()
 
 if __name__ == "__main__":
    # print sys.argv
-   main(sys.argv[1])
+   try:
+     extract(sys.argv[1])
+   except MySQLdb.Error, e:
+     print e
+     print "Error %d: %s" % (e.args[0], e.args[1])
+     sys.exit(1)

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 20, 2015 at 03:53 PM
+-- Generation Time: Mar 26, 2015 at 12:27 PM
 -- Server version: 5.5.40-0ubuntu1
 -- PHP Version: 5.5.12-2ubuntu4.1
 
@@ -23,27 +23,13 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `analyzed`
+-- Table structure for table `movie`
 --
 
-CREATE TABLE IF NOT EXISTS `analyzed` (
-`w_id` int(11) NOT NULL,
-  `original` varchar(64) COLLATE utf8_turkish_ci NOT NULL,
-  `pos` varchar(64) COLLATE utf8_turkish_ci NOT NULL,
-  `stem1` varchar(64) COLLATE utf8_turkish_ci NOT NULL,
-  `stem2` varchar(64) COLLATE utf8_turkish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `film`
---
-
-CREATE TABLE IF NOT EXISTS `film` (
-  `title` varchar(64) COLLATE utf8_turkish_ci NOT NULL,
-  `path_scene` varchar(100) COLLATE utf8_turkish_ci NOT NULL,
-`f_id` int(11) NOT NULL
+CREATE TABLE IF NOT EXISTS `movie` (
+  `title` varchar(256) COLLATE utf8_turkish_ci NOT NULL,
+`mid` int(11) NOT NULL,
+  `path` varchar(256) COLLATE utf8_turkish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -53,56 +39,86 @@ CREATE TABLE IF NOT EXISTS `film` (
 --
 
 CREATE TABLE IF NOT EXISTS `scene` (
-`s_id` int(20) NOT NULL,
-  `path_scene` varchar(1000) COLLATE utf8_turkish_ci DEFAULT NULL,
+`sid` int(20) NOT NULL,
+  `mid` int(11) NOT NULL,
   `sentence` text COLLATE utf8_turkish_ci NOT NULL,
   `start` varchar(16) COLLATE utf8_turkish_ci NOT NULL,
   `stop` varchar(16) COLLATE utf8_turkish_ci NOT NULL,
-  `clip_file` varchar(1000) COLLATE utf8_turkish_ci DEFAULT NULL,
-  `word` varchar(32) COLLATE utf8_turkish_ci NOT NULL
+  `ready` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `words`
+--
+
+CREATE TABLE IF NOT EXISTS `words` (
+`wid` int(11) NOT NULL,
+  `original` varchar(64) COLLATE utf8_turkish_ci NOT NULL,
+  `pos` varchar(64) COLLATE utf8_turkish_ci NOT NULL,
+  `stem1` varchar(64) COLLATE utf8_turkish_ci NOT NULL,
+  `stem2` varchar(64) COLLATE utf8_turkish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `words_scenes`
+--
+
+CREATE TABLE IF NOT EXISTS `words_scenes` (
+  `wid` int(11) NOT NULL,
+  `sid` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `analyzed`
+-- Indexes for table `movie`
 --
-ALTER TABLE `analyzed`
- ADD PRIMARY KEY (`w_id`);
-
---
--- Indexes for table `film`
---
-ALTER TABLE `film`
- ADD PRIMARY KEY (`f_id`);
+ALTER TABLE `movie`
+ ADD PRIMARY KEY (`mid`);
 
 --
 -- Indexes for table `scene`
 --
 ALTER TABLE `scene`
- ADD PRIMARY KEY (`s_id`);
+ ADD PRIMARY KEY (`sid`), ADD KEY `mid` (`mid`);
+
+--
+-- Indexes for table `words`
+--
+ALTER TABLE `words`
+ ADD PRIMARY KEY (`wid`);
+
+--
+-- Indexes for table `words_scenes`
+--
+ALTER TABLE `words_scenes`
+ ADD UNIQUE KEY `wid` (`wid`,`sid`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `analyzed`
+-- AUTO_INCREMENT for table `movie`
 --
-ALTER TABLE `analyzed`
-MODIFY `w_id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `film`
---
-ALTER TABLE `film`
-MODIFY `f_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `movie`
+MODIFY `mid` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `scene`
 --
 ALTER TABLE `scene`
-MODIFY `s_id` int(20) NOT NULL AUTO_INCREMENT;
+MODIFY `sid` int(20) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `words`
+--
+ALTER TABLE `words`
+MODIFY `wid` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
