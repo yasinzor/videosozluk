@@ -65,7 +65,8 @@ def extract(filmName):
         ignoreList.pop(0)
 
     frame = 5 * 1000   # 5 seconds before and after
-    for (i,sub) in enumerate(new_subs[:80]):
+    # for (i,sub) in enumerate(new_subs[:80]):
+    for (i,sub) in enumerate(new_subs):
       # start time of scene
       try:
           j = i - 1
@@ -102,7 +103,7 @@ def extract(filmName):
       scene = { 'sentence': sub['text'], 'start': start, 'end': end }
       #print "%s time: %s" % (sub['text'],str(end - start))
 
-      text = sub['text'].strip()
+      text = sub['text'].strip().lower()
       text = nltk.word_tokenize(text)
       tags = nltk.pos_tag(text)
       #print tags
@@ -113,13 +114,14 @@ def extract(filmName):
       sql = "INSERT INTO scene(mid,sentence,start,stop) VALUES (%s,%s,%s,%s)"
       cursor.execute(sql, (mid, sub['text'], start, end) )
       sid = cursor.lastrowid
-      scene = { 'sentence': sub['text'], 'start': start, 'end': end }
       print "scene: %s\n" % (scene)
       f.write(str(scene)+ "\n")
+      scene_words = set()
       for j in set(tags):
         base_pos = j[1][:2]
-        word = j[0].lower()
-        if((word not in stop) and (base_pos in our_tags.keys()) and "'" not in word):
+        word = j[0]
+        if((word not in stop) and (base_pos in our_tags.keys()) and "'" not in word and word not in scene_words):
+            scene_words.add(word)
             if ((word, base_pos) in words):
                 wid = words[(word, base_pos)]
             else:
