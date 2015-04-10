@@ -86,7 +86,7 @@ def extract(filmName):
           # end time of scene
           j = i + 1
           end1 = sub['end']
-          if j == len(new_subs):
+          if j >= len(new_subs) - 1:
               end = end1 + pysrt.SubRipTime(milliseconds=frame/2)
           else:
               end2 = new_subs[j]['end']
