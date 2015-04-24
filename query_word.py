@@ -20,13 +20,29 @@ def query(word):
     for (i,words_dict) in [(1,words1), (2,words2)]:
         wids = words_dict.values()
         for wid in wids:
-            sql = "SELECT s.sentence, s.ready, m.title FROM scene AS s, words_scenes AS ws, movie as m " + \
+            sql = "SELECT s.sentence, s.start, s.stop, s.ready, m.title FROM scene AS s, words_scenes AS ws, movie as m " + \
                            "WHERE ws.wid=%d AND ws.sid=s.sid AND s.mid = m.mid" % int(wid)
-            print sql
+            # print sql
             cursor.execute(sql)
             rows = cursor.fetchall()
             if (i==1): scenes1 += rows
             else: scenes2 += rows
     print scenes1
     print scenes2
+    return scenes1 + scenes2
     db.close()
+
+"""
+def f(k):
+    import json
+    l = []
+    print(subs[k].start.ordinal / 1000.0)
+    print(subs[k+5].end.ordinal / 1000.0)
+    start0 = subs[k].start.ordinal / 1000.0
+    for i in range(k,k+6):
+      start = subs[i].start.ordinal / 1000.0
+      end = subs[i].end.ordinal / 1000.0
+      text = subs[i].text
+      l.append({'start': start - start0, 'end': end - start0, 'text': text})
+    return json.dumps(l)
+"""

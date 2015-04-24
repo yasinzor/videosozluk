@@ -68,39 +68,7 @@ def extract(filmName):
     # for (i,sub) in enumerate(new_subs[:80]):
     for (i,sub) in enumerate(new_subs):
       # start time of scene
-      try:
-          j = i - 1
-          start1 = sub['start']
-          if j < 0:
-             start = start1 - pysrt.SubRipTime(milliseconds=frame/2)
-          else:
-              start2 = new_subs[j]['start']
-              if start1 - start2 > frame:
-                 start = start1 - pysrt.SubRipTime(milliseconds=frame/2)
-              else:
-                while (j >= 0 and start1 - start2 < frame):
-                  start = start2
-                  j -= 1
-                  start2 = new_subs[j]['start']
-
-          # end time of scene
-          j = i + 1
-          end1 = sub['end']
-          if j >= len(new_subs) - 1:
-              end = end1 + pysrt.SubRipTime(milliseconds=frame/2)
-          else:
-              end2 = new_subs[j]['end']
-              if end2 - end1 > frame:
-                end = end1 + pysrt.SubRipTime(milliseconds=frame/2)
-              else:
-                while (j < len(new_subs) and end2 -end1 < frame):
-                  end = end2
-                  j += 1
-                  end2 = new_subs[j]['end']
-      except IndexError as e:
-          print "j=%s i=%d, sub=%s" % (j, i, sub)
-          raise e
-      scene = { 'sentence': sub['text'], 'start': start, 'end': end }
+      scene = { 'sentence': sub['text'], 'start': sub['start'], 'end': sub['end'] }
       #print "%s time: %s" % (sub['text'],str(end - start))
 
       text = sub['text'].strip().lower()
@@ -112,7 +80,7 @@ def extract(filmName):
       our_tags = { "NN": wn.NOUN, "JJ":wn.ADJ, "VB":wn.VERB, "RB":wn.ADV }
 
       sql = "INSERT INTO scene(mid,sentence,start,stop) VALUES (%s,%s,%s,%s)"
-      cursor.execute(sql, (mid, sub['text'], start, end) )
+      cursor.execute(sql, (mid, sub['text'], sub['start'], sub['end']) )
       sid = cursor.lastrowid
       print "scene: %s\n" % (scene)
       f.write(str(scene)+ "\n")
@@ -133,8 +101,8 @@ def extract(filmName):
                 words[(word, base_pos)] = wid
             sql = "INSERT INTO words_scenes(wid, sid) VALUES (%d,%d)" % (int(wid),int(sid))
             cursor.execute(sql)
-
-    db.commit()
+      db.commit()
+    # db.commit()
     db.close()
 
 if __name__ == "__main__":
