@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    <script type="text/javascript" src="static/jquery-2.1.3.js"></script>
+    <script src="static/ajax.js"></script>
+    <script type="text/javascript" src="/static/bootstrap.js"></script>
+    
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/template.css">
+   
+ 
+    </head>
+    <header>
+           <div style="width:300px; margin-left:auto; margin-right:auto;height:150px;">
+          <img src="static/logo.jpg" alt="logo" height="150px" width="300px" position="relative" > 
+          </div>
+    </header>
+    <body>
+    <div id="right"></div>
+    <div id="left"></div>
+    <style>
+		.half {
+  width: 30%;
+}    
+    </style>
+
+
+
+ <div id="searchbox">
+    <div class="input-group half">
+
+    <input type="text" class="form-control" id="search" placeholder="ViDic it! ">   
+	<span class="input-group-btn">	 
+	 	<button class="btn"	id="searchButton" type="button">SEARCH</button>
+		</span>	 
+	 </div>
+	  </div>
+	  <div id=translate> </div>
+	    <div id="videotag">
+	        <div class="video">
+    
+    <video id="video" width="640" height="480" controls poster="/static/logo.jpg"autoplay>
+  <source type="video/mp4">
+  Browser no support.
+</video>
+   </div>
+ </div> 
+
+    <table class="table table-striped" id="result">
+        <tbody id="result"></tbody>    
+    </table>
+
+
+       
+        
+    </body>
+</html>

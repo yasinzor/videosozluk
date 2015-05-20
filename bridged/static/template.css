@@ -1,0 +1,98 @@
+#videotag {
+height: 480px;
+width: 800px;
+margin-right: auto;
+margin-left: auto;
+background-color: #000000;
+margin-top: 50px;
+
+
+
+}
+.video{
+margin-right: auto;
+margin-left: auto;
+width: 800px;
+height: auto;
+
+
+}
+#video{
+margin-right: auto;
+margin-left: auto;
+width: 800px;
+height: 480px;
+}
+#searchbox{
+
+width: 393px;
+margin-left: auto;
+margin-right: auto;
+#box-shadow: 0 10px 10px #111111;
+}
+#search{
+width:300px;
+height:28px;
+font-weight:bold;
+border:1px solid #BDC7D8;         
+font-family: Verdana, Arial, Helvetica, sans-serif;   
+color: black;
+border-radius: 0px 0px 0px 0px;
+
+}
+#searchButton{
+	height:28px;
+	font-weight:bold;
+	#border:1px solid #BDC7D8;
+      
+   font-family: Verdana, Arial, Helvetica, sans-serif;   
+   color: black;
+   border-radius: 0px 0px 0px 0px;	
+	
+
+}
+
+.play{
+	border:1px solid #BDC7D8;
+      
+   font-family: Verdana, Arial, Helvetica, sans-serif;   
+   color: blue;
+   border-radius: 0px 0px 0px 0px;
+
+
+
+}
+
+#result{
+	
+width: 800px;
+margin-right: auto;
+margin-left: auto;
+
+
+}
+
+#result tr.vidic-selected {
+  font-size: 120%;
+  background-color: lightblue;
+  border: 2px solid gray;
+}
+
+em{
+
+color:blue;
+}
+#right{
+float: right;
+width: 100px;
+height: 1000px;
+
+
+}
+#left{
+float: left;
+width: 100px;
+height: 1000px;
+
+
+}
